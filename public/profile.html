@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Form</title>
+    <!-- Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profile</h1>
+        <form id="profileForm">
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" required><br>
+            <input type="text" id="fullName" name="fullName" placeholder="Full Name" required><br>
+            <input type="text" id="organization" name="organization" placeholder="Organization" required><br>
+            <input type="number" id="age" name="age" placeholder="Age" required><br>
+            <button id="submit" type="submit">Save</button>
+        </form>
+    </div>
+
+    <script>
+        // Firebaseの設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
+  authDomain: "cobloom-58ea3.firebaseapp.com",
+  projectId: "cobloom-58ea3",
+  storageBucket: "cobloom-58ea3.appspot.com",
+  messagingSenderId: "139460798310",
+  appId: "1:139460798310:web:d496ff61842eb28d8d4aa7"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Firestoreの参照を取得
+        const db = firebase.firestore();
+
+        // フォーム要素を取得
+        const profileForm = document.getElementById("profileForm");
+        const profilePictureInput = document.getElementById("profilePicture");
+        const fullNameInput = document.getElementById("fullName");
+        const organizationInput = document.getElementById("organization");
+        const ageInput = document.getElementById("age");
+
+        // フォーム送信時の処理
+        profileForm.addEventListener("submit", function(event) {
+            event.preventDefault(); // デフォルトのフォーム送信動作をキャンセルする
+
+            // 入力値を取得
+            const profilePicture = profilePictureInput.files[0];
+            const fullName = fullNameInput.value;
+            const organization = organizationInput.value;
+            const age = parseInt(ageInput.value); // 数値に変換
+
+            // Firestoreにデータを保存
+            db.collection("profiles").add({
+                profilePicture: profilePicture.name, // 画像ファイル名のみ保存
+                fullName: fullName,
+                organization: organization,
+                age: age
+            })
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+                alert("Profile saved successfully!");
+                // フォームをリセット
+                profileForm.reset();
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+                alert("Failed to save profile.");
+            });
+        });
+    </script>
+</body>
+</html>
