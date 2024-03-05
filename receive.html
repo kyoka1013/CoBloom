@@ -1,0 +1,34 @@
+<h2>receive result</h2>
+<div id="result"></div>
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyClRttDuVyPHWhSzDuxGyXSAin01u4bf0A",
+    authDomain: "test223-c5e18.firebaseapp.com",
+    databaseURL: "https://test223-c5e18-default-rtdb.firebaseio.com",
+    projectId: "test223-c5e18",
+    storageBucket: "test223-c5e18.appspot.com",
+    messagingSenderId: "188900195709",
+    appId: "1:188900195709:web:4d9056e95c832c7f8e6014",
+    measurementId: "G-Y4XYD1R02E"
+    });
+
+  const db = firebase.firestore();
+
+  // FirestoreをSubscribeし更新があると処理が実行される
+  db.collection('users').onSnapshot(querySnapshot => {
+    // 表示内容を全て削除
+    document.querySelector('#result').innerHTML = '';
+
+    // デフォルトではコレクションの内容が全件渡される
+    querySnapshot.forEach(doc => {
+      const p = document.createElement('p');
+      const result = document.createTextNode(
+        `${doc.id} => ${JSON.stringify(doc.data())}`,
+      );
+      p.appendChild(result);
+      document.querySelector('#result').appendChild(p);
+    });
+  });
+</script>

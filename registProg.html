@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>進捗データの登録</title>
+    </head>
+    <body>
+        <h1>進捗報告</h1>
+        <h2>担当ページ：</h2>
+        <h2>終わらせたタスク</h2>
+        <div class="inputcon">
+            <h3 class="inputDescription">担当箇所の理解</h3>
+            <input type="number" id="readData" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        </div>
+
+        <div class="inputcon">
+            <h3 class="inputDescription">内容の要約</h3>
+            <input type="number" id="sumData" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        </div>
+
+        <div class="inputcon">
+            <h3 class="inputDescription">発表準備</h3>
+            <input type="number" id="presenData" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        </div>
+
+        <button id="submitButton">送信</button>
+        <h2 id = "result"></h2>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+    <script>
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjXAR91AtyS_vS10Sdl47_cvHetrvYI6U",
+            authDomain: "co-bloom.firebaseapp.com",
+            databaseURL: "https://co-bloom-default-rtdb.firebaseio.com",
+            projectId: "co-bloom",
+            storageBucket: "co-bloom.appspot.com",
+            messagingSenderId: "400310248137",
+            appId: "1:400310248137:web:042dcd6eb93aa25384a318"
+        };
+    
+
+    // Initialize Firebase
+
+    
+    firebase.initializeApp(firebaseConfig);
+
+    //↑firebase初期化
+
+    const db = firebase.firestore();
+
+    //↓前回までの数字を入れておく
+    document.getElementById("inputData").value = 10;
+
+        document.querySelector('#submitButton').addEventListener('click', function() {
+            let readInput = Number(document.getElementById("readData").value);
+            let sumInput = Number(document.getElementById("sumData").value);
+            let presenInput = Number(document.getElementById("presenData").value);
+
+            if(nameInput==null || ageInput == null){
+                document.getElementById('result').innerHTML = "値を入力してください";
+            }else{
+                db.collection('progress')
+                .add({
+                    age:ageInput,
+                    name:nameInput
+                })
+                .then(function(docRef) {
+                    console.log('Document written with ID: ', docRef.id);
+                    document.getElementById('result').innerHTML = "登録完了！";
+                })
+                .catch(function(error) {
+                    console.error('Error adding document: ', error);
+                });
+            }
+    });
+       
+    </script>
+</html>

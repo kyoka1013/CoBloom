@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>ゼミ情報の初期設定</title>
+    </head>
+    <body>
+        <h1>新規ゼミの登録</h1>
+       <h3>ゼミ名</h3>
+       <input type="text" id="zeminame" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        <h2>メンバー</h2>
+
+        <div class="inputcon">
+            <p>名前/担当ページ</p>
+        </div>
+
+        <div class="inputcon">
+            <input type="text" id="memberName1" placeholder="入力内容をここに入力してください"
+            class = "textbox">
+            <div class="range">
+                <input type="number" id="memberStart1" placeholder="入力内容をここに入力してください"
+                class = "rangebox">
+                <input type="number" id="memberEnd1" placeholder="入力内容をここに入力してください"
+                class = "rangebox">
+            </div>
+
+        </div>
+
+        <div class="inputcon">
+            <input type="text" id="memberName2" placeholder="入力内容をここに入力してください"
+                class = "textbox">
+                <div class="range">
+                    <input type="number" id="memberStart2" placeholder="入力内容をここに入力してください"
+                    class = "rangebox">
+                    <input type="number" id="memberEnd2" placeholder="入力内容をここに入力してください"
+                    class = "rangebox">
+                </div>
+        </div>
+
+        <div class="inputcon">
+            <input type="text" id="memberName3" placeholder="入力内容をここに入力してください"
+            class = "textbox">
+            <div class="range">
+                <input type="number" id="memberStart3" placeholder="入力内容をここに入力してください"
+                class = "rangebox">
+                <input type="number" id="memberEnd3" placeholder="入力内容をここに入力してください"
+                class = "rangebox">
+            </div>
+        </div>
+
+        <button id="submitButton">送信</button>
+        <h2 id = "result"></h2>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+    <script>
+        
+        const firebaseConfig = {
+    apiKey: "AIzaSyBjXAR91AtyS_vS10Sdl47_cvHetrvYI6U",
+    authDomain: "co-bloom.firebaseapp.com",
+    databaseURL: "https://co-bloom-default-rtdb.firebaseio.com",
+    projectId: "co-bloom",
+    storageBucket: "co-bloom.appspot.com",
+    messagingSenderId: "400310248137",
+    appId: "1:400310248137:web:042dcd6eb93aa25384a318"
+    };
+    
+
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+
+    //↑firebase初期化
+
+    const db = firebase.firestore();
+
+
+        document.querySelector('#submitButton').addEventListener('click', function() {
+
+            let zemiName =  document.getElementById("zeminame").value;
+
+            //member1
+            let membername1 =  document.getElementById("memberName1").value;
+            let memberStart1 = Number(document.getElementById("memberStart1").value);
+            let memberEnd1 = Number(document.getElementById("memberEnd1").value);
+            //memberStart1 memberEnd1
+
+            //member2
+            let membername2 =  document.getElementById("memberName2").value;
+            let memberStart2 = Number(document.getElementById("memberStart2").value);
+            let memberEnd2 = Number(document.getElementById("memberEnd2").value);
+
+            //member3
+            let membername3 =  document.getElementById("memberName3").value;
+            let memberStart3 = Number(document.getElementById("memberStart3").value);
+            let memberEnd3 = Number(document.getElementById("memberEnd3").value);
+
+            if(membername1 == null ||  memberStart1==null ||memberEnd1 == null || 
+                 membername2 == null || memberStart2==null ||memberEnd2 == null ||  
+                 membername3 == null ||  memberStart3==null ||memberEnd3 == null ){
+                document.getElementById('result').innerHTML = "値を入力してください";
+            }else{
+                var batch = db.batch();
+
+                //本当はsamplememberをゼミの名前にしたい
+                const mem1 = db.collection('sampleMember').doc('mem1');
+                batch.set(mem1,{name:membername1, start:memberStart1,end:memberEnd1,
+                read:0,sum:0,presen:0});
+
+                const mem2 = db.collection('sampleMember').doc('mem2');
+                batch.set(mem2,{name:membername2, start:memberStart2,end:memberEnd2,
+                    read:0,sum:0,presen:0});
+
+                const mem3 = db.collection('sampleMember').doc('mem3');
+                batch.set(mem3,{name:membername3, start:memberStart3,end:memberEnd3,
+                    read:0,sum:0,presen:0});
+
+                batch.commit()
+                .then(() => {
+                    console.log('success!');
+                    document.getElementById('result').innerHTML = "登録完了！";
+                })
+                .catch(function(error){
+                    console.log('error');
+                });
+                /*
+                db.collection('sampleMember')
+                .add({
+                    age:ageInput,
+                    name:nameInput
+                })
+                .then(function(docRef) {
+                    console.log('Document written with ID: ', docRef.id);
+                    document.getElementById('result').innerHTML = "登録完了！";
+                })
+                .catch(function(error) {
+                    console.error('Error adding document: ', error);
+                });
+                */
+            }
+    });
+       
+    </script>
+</html>

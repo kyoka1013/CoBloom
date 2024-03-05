@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .profile-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>User Profile</h2>
+        <img id="profilePicture" src="" alt="Profile Picture">
+        <p><strong>Full Name:</strong> <span id="fullName"></span></p>
+        <p><strong>Organization:</strong> <span id="organization"></span></p>
+        <p><strong>Age:</strong> <span id="age"></span></p>
+    </div>
+
+    <script>
+        // Firebaseの設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
+            authDomain: "cobloom-58ea3.firebaseapp.com",
+            projectId: "cobloom-58ea3",
+            storageBucket: "cobloom-58ea3.appspot.com",
+            messagingSenderId: "139460798310",
+            appId: "1:139460798310:web:d496ff61842eb28d8d4aa7"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Firestoreの参照を取得
+        const db = firebase.firestore();
+
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // ユーザーが認証されている場合、Firestoreからユーザーデータを取得
+                db.collection("profiles").doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        document.getElementById('profilePicture').src = userData.profilePicture;
+                        document.getElementById('fullName').textContent = userData.fullName;
+                        document.getElementById('organization').textContent = userData.organization;
+                        document.getElementById('age').textContent = userData.age;
+                    } else {
+                        console.log("No such document!");
+                    }
+                }).catch(error => {
+                    console.log("Error getting document:", error);
+                });
+            } else {
+                // ユーザーが認証されていない場合
+                console.log("No user is signed in.");
+                // ここでログインページへリダイレクトするなどの処理を行う
+            }
+        });
+    </script>
+</body>
+</html>

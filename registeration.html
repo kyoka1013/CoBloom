@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>進捗データの登録</title>
+    </head>
+    <body>
+        <h1>データ登録</h1>
+        <h2>名前</h2>
+        <input type="text" id="inputData" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        <h2>年齢</h2>
+        <input type="text" id="ageData" placeholder="入力内容をここに入力してください"
+        class = "textbox">
+        <button id="submitButton">送信</button>
+        <h2 id = "result"></h2>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+    apiKey: "AIzaSyBjXAR91AtyS_vS10Sdl47_cvHetrvYI6U",
+    authDomain: "co-bloom.firebaseapp.com",
+    databaseURL: "https://co-bloom-default-rtdb.firebaseio.com",
+    projectId: "co-bloom",
+    storageBucket: "co-bloom.appspot.com",
+    messagingSenderId: "400310248137",
+    appId: "1:400310248137:web:042dcd6eb93aa25384a318"
+    };
+
+    // Initialize Firebase
+
+    
+    firebase.initializeApp(firebaseConfig);
+
+    //↑firebase初期化
+
+    const db = firebase.firestore();
+
+        document.querySelector('#submitButton').addEventListener('click', function() {
+            let nameInput = document.getElementById("inputData").value;
+            let ageInput = Number(document.getElementById("ageData").value);
+
+            if(nameInput==null || ageInput == null){
+                document.getElementById('result').innerHTML = "値を入力してください";
+            }else{
+                db.collection('users')
+                .add({
+                    age:ageInput,
+                    name:nameInput
+                })
+                .then(function(docRef) {
+                    console.log('Document written with ID: ', docRef.id);
+                    document.getElementById('result').innerHTML = "登録完了！";
+                })
+                .catch(function(error) {
+                    console.error('Error adding document: ', error);
+                });
+            }
+    });
+       
+    </script>
+</html>
