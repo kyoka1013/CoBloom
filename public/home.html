@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleforhome.css">
+    <title>ホーム：進捗確認</title>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-auth.js"></script>
+</head>
+<body>
+    <div id="head">
+        <h1>co bloom</h1>
+        <ul class="menu-list">
+            <li><a href="#">home</a></li>
+            <li><a id="MyPage">MyPage</a></li>
+            <li><a id="logout">Logout</a></li>
+        </ul>
+    </div>
+    <h1>進捗の確認</h1>
+
+    <!-- ユーザーカードのセクション -->
+    <div class="userdata">
+        <!-- ユーザーカードの例 -->
+        <div class="usercard" id="user1">
+            <p>username</p>
+            <p>progress</p>
+            <p>date</p>
+            <button>detail</button>
+        </div>
+    </div>
+
+    <!-- 成長のセクション -->
+    <div id="flower">
+        <p>花の成長</p>
+        <p>--%</p>
+    </div>
+
+    <script>
+        // Firebaseの設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
+            authDomain: "cobloom-58ea3.firebaseapp.com",
+            projectId: "cobloom-58ea3",
+            storageBucket: "cobloom-58ea3.appspot.com",
+  messagingSenderId: "139460798310",
+  appId: "1:139460798310:web:d496ff61842eb28d8d4aa7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ログアウト処理
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
+
+        // MyPageへのリダイレクト
+        document.getElementById('MyPage').addEventListener('click', function() {
+            window.location.href = 'userInfo.html';
+        });
+    </script>
+</body>
+</html>

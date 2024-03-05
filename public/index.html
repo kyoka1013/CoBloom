@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoBloom</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to CoBloom</h1>
+    <button id="login">Login</button>
+    <button id="signup">Sign Up</button>
+
+    <script>
+        document.getElementById('login').addEventListener('click', function() {
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('signup').addEventListener('click', function() {
+            window.location.href = 'signup.html';
+        });
+    </script>
+</body>
+</html>

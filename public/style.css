@@ -1,0 +1,57 @@
+body {
+    display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+    text-align: center;
+}
+
+/*入力ボタンのラベルの設定*/
+input,
+label {
+  margin: 0.4rem 0;
+  justify-content: center;
+  text-align: center;
+}
+
+/*入力ボタンの設定*/
+.textbox{
+    width:300px;
+    height:50px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    padding:5px;
+    margin: 5px;
+}
+
+/*入力ボタンにカーソルを合わせた時の設定*/
+.textbox:focus {
+    outline: 0;
+    border: 2px solid #2196f3;
+}
+
+.rangebox{
+    width:100px;
+    height:30px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    padding:5px;
+}
+
+/*入力ボタンにカーソルを合わせた時の設定*/
+.rangebox:focus {
+    outline: 0;
+    border: 2px solid #2196f3;
+  }
+
+#result{
+    color:coral;
+    font-weight: bold;
+}
+
+.inputcon{
+    display: flex;
+    flex-direction: row; /* 横並びに配置 */
+    flex: 1;
+    margin: 2px;
+}

@@ -7,6 +7,10 @@
     <!-- Firebase JavaScript SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,7 +33,7 @@
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #6d5347;
         }
 
         input[type="file"],
@@ -46,7 +50,7 @@
         button[type="submit"] {
             width: 100%;
             padding: 10px;
-            background-color: #4caf50;
+            background-color: #FF883E;
             border: none;
             border-radius: 5px;
             color: white;
@@ -56,7 +60,7 @@
         }
 
         button[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #FF883E;
         }
     </style>
 </head>
@@ -75,7 +79,7 @@
     <script>
         // Firebaseの設定
         const firebaseConfig = {
-            apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
+  apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
   authDomain: "cobloom-58ea3.firebaseapp.com",
   projectId: "cobloom-58ea3",
   storageBucket: "cobloom-58ea3.appspot.com",
@@ -96,32 +100,61 @@
 
         // フォーム送信時の処理
         profileForm.addEventListener("submit", function(event) {
-            event.preventDefault(); // デフォルトのフォーム送信動作をキャンセルする
+    event.preventDefault(); // デフォルトのフォーム送信動作をキャンセル
 
-            // 入力値を取得
-            const profilePicture = profilePictureInput.files[0];
-            const fullName = fullNameInput.value;
-            const organization = organizationInput.value;
-            const age = parseInt(ageInput.value); // 数値に変換
+    const user = firebase.auth().currentUser;
+    if (user) {
+        // ユーザーが認証されている場合
+        const profilePicture = profilePictureInput.files[0];
+        const fullName = fullNameInput.value;
+        const organization = organizationInput.value;
+        const age = parseInt(ageInput.value); // 数値に変換
 
-            // Firestoreにデータを保存
-            db.collection("profiles").add({
-                profilePicture: profilePicture.name, // 画像ファイル名のみ保存
-                fullName: fullName,
-                organization: organization,
-                age: age
-            })
-            .then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-                alert("Profile saved successfully!");
-                // フォームをリセット
-                profileForm.reset();
-            })
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-                alert("Failed to save profile.");
+        // プロフィール写真が変更された場合はアップロード
+        if (profilePicture) {
+            const storageRef = firebase.storage().ref();
+            const profilePictureRef = storageRef.child('profilePictures/' + user.uid + '/' + profilePicture.name);
+            profilePictureRef.put(profilePicture).then(function(snapshot) {
+                // アップロードした画像のURLを取得
+                profilePictureRef.getDownloadURL().then(function(url) {
+                    updateProfile(user, url, fullName, organization, age);
+                });
+            }).catch(function(error) {
+                console.error("Error uploading file: ", error);
+                alert("Failed to upload profile picture.");
             });
-        });
+        } else {
+            // プロフィール写真が変更されていない場合は現在のプロフィール情報を更新
+            updateProfile(user, null, fullName, organization, age);
+        }
+    } else {
+        // ユーザーが認証されていない場合
+        console.log("User is not signed in.");
+        alert("Please sign in to save your profile.");
+    }
+});
+
+// プロフィールを更新する関数
+function updateProfile(user, profilePictureUrl, fullName, organization, age) {
+    const profileRef = db.collection("profiles").doc(user.uid);
+    return profileRef.update({
+        profilePicture: profilePictureUrl || user.profilePicture, // プロフィール写真が変更されなかった場合は現在のURLを使用
+        fullName: fullName,
+        organization: organization,
+        age: age
+    })
+    .then(function() {
+        console.log("Document successfully updated!");
+        alert("Profile updated successfully!");
+        profileForm.reset();
+        window.location.href = "home.html";
+    })
+    .catch(function(error) {
+        console.error("Error updating document: ", error);
+        alert("Failed to update profile.");
+    });
+}
+
     </script>
 </body>
 </html>
