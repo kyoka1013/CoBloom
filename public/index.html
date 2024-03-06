@@ -6,29 +6,72 @@
     <title>CoBloom</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             height: 100vh;
+            background-color: #f5deb3; 
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #3DA2B0;
+            font-size: 48px; 
         }
         button {
-            background-color: #007bff;
+            background-color: #3DA2B0; 
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ボタンに影を追加 */
+        }
+        button:hover {
+            background-color: #3DA2B0; 
+        }
+        .cobloom-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-right: 20px;
+        }
+        .cobloom-logo {
+            font-size: 60px;
+            color: #3DA2B0;
+            margin-left: 10px; 
+        }
+        .cobloom-image {
+            width: 100px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .all {
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to CoBloom</h1>
-    <button id="login">Login</button>
-    <button id="signup">Sign Up</button>
+    <div class="all">
+        <div class="cobloom-logo-container">
+            <img src="https://cdn.glitch.global/50002350-4e3f-4465-9a0b-5507ff396498/co_flower240k.PNG?v=1709553281993" class="cobloom-image">
+            <h1 class="cobloom-logo">Welcome to CoBloom!</h1>
+        </div>
+        <div class="container">
+            <button id="login">Login</button>
+            <button id="signup">Sign Up</button>
+        </div>
+    </div>
 
     <script>
         document.getElementById('login').addEventListener('click', function() {
