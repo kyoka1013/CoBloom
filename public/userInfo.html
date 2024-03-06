@@ -7,6 +7,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,20 +20,31 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        img {
-            max-width: 100%;
-            height: auto;
+        img#profilePicture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px; 
+        }
+        .edit-icon {
+            font-size: 20px;
+            cursor: pointer;
+            color: #FF883E; 
+            margin-left: 5px;
         }
     </style>
 </head>
 <body>
     <div class="profile-container">
         <h2>User Profile</h2>
-        <img id="profilePicture" src="" alt="Profile Picture">
-        <p><strong>Full Name:</strong> <span id="fullName"></span></p>
-        <p><strong>Organization:</strong> <span id="organization"></span></p>
-        <p><strong>Age:</strong> <span id="age"></span></p>
-        <button id="toProfile">Edit Profile</button>
+        <label for="profileImageInput">
+            <img id="profilePicture" src="" alt="Profile Picture">
+            <span class="edit-icon">&#9998;</span>
+        </label>
+        <input type="file" id="profileImageInput" style="display: none;"><br><br>
+        <p><strong>Full Name:</strong> <span id="fullName"></span> <span class="edit-icon" id="editName">&#9998;</span></p>
+        <p><strong>Organization:</strong> <span id="organization"></span> <span class="edit-icon" id="editOrganization">&#9998;</span></p> 
+        <p><strong>Age:</strong> <span id="age"></span> <span class="edit-icon" id="editAge">&#9998;</span></p> 
     </div>
 
     <script>
@@ -49,6 +61,7 @@
 
         // Firestoreの参照を取得
         const db = firebase.firestore();
+        const storage = firebase.storage();
 
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
@@ -70,10 +83,160 @@
                 // ユーザーが認証されていない場合
                 console.log("No user is signed in.");
                 // ここでログインページへリダイレクトするなどの処理を行う
+                window.location.href = 'login.html';
             }
         });
-        document.getElementById('toProfile').addEventListener('click', function() {
-            window.location.href = 'profile.html'; // Assuming the actual page is 'profileEdit.html'
+
+        // 編集アイコンのクリックイベントリスナーを追加
+        document.getElementById('editName').addEventListener('click', function() {
+            // フルネームの入力フォームを表示する
+            const fullNameInput = prompt("Enter your full name:", document.getElementById('fullName').textContent);
+
+            // 入力がキャンセルされた場合は何もしない
+            if (fullNameInput === null) {
+                return;
+            }
+
+            // 入力が空の場合はエラーメッセージを表示する
+            if (fullNameInput.trim() === "") {
+                alert("Full name cannot be empty.");
+                return;
+            }
+
+            // Firebaseのユーザーデータを更新する
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const profileRef = db.collection("profiles").doc(user.uid);
+                profileRef.update({
+                    fullName: fullNameInput
+                })
+                .then(() => {
+                    // 更新が成功した場合、表示を更新する
+                    document.getElementById('fullName').textContent = fullNameInput;
+                    alert("Full name updated successfully!");
+                })
+                .catch(error => {
+                    console.error("Error updating full name:", error);
+                    alert("Failed to update full name.");
+                });
+            } else {
+                console.log("No user is signed in.");
+                // 未認証の場合はログインページにリダイレクトなどの処理を行う
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('editOrganization').addEventListener('click', function() {
+   
+            const organizationInput = prompt("Enter your organization:", document.getElementById('organization').textContent);
+
+    
+            if (organizationInput === null) {
+                return;
+            }
+
+
+            if (organizationInput.trim() === "") {
+                alert("Organization cannot be empty.");
+                return;
+            }
+
+            
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const profileRef = db.collection("profiles").doc(user.uid);
+                profileRef.update({
+                    organization: organizationInput
+                })
+                .then(() => {
+                   
+                    document.getElementById('organization').textContent = organizationInput;
+                    alert("Organization updated successfully!");
+                })
+                .catch(error => {
+                    console.error("Error updating organization:", error);
+                    alert("Failed to update organization.");
+                });
+            } else {
+                console.log("No user is signed in.");
+              
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('editAge').addEventListener('click', function() {
+
+            const ageInput = prompt("Enter your age:", document.getElementById('age').textContent);
+
+            
+            if (ageInput === null) {
+                return;
+            }
+
+          
+            if (ageInput.trim() === "" || isNaN(ageInput)) {
+                alert("Age must be a number.");
+                return;
+            }
+
+           
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const profileRef = db.collection("profiles").doc(user.uid);
+                profileRef.update({
+                    age: parseInt(ageInput)
+                })
+                .then(() => {
+         
+                    document.getElementById('age').textContent = parseInt(ageInput);
+                    alert("Age updated successfully!");
+                })
+                .catch(error => {
+                    console.error("Error updating age:", error);
+                    alert("Failed to update age.");
+                });
+            } else {
+                console.log("No user is signed in.");
+              
+                window.location.href = 'login.html';
+            }
+        });
+
+    
+        document.getElementById('profileImageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const user = firebase.auth().currentUser;
+
+            if (user) {
+             
+                const storageRef = storage.ref();
+                const profilePictureRef = storageRef.child('profilePictures/' + user.uid + '/' + file.name);
+                profilePictureRef.put(file).then(function(snapshot) {
+         
+                    profilePictureRef.getDownloadURL().then(function(url) {
+                     
+                        db.collection("profiles").doc(user.uid).update({
+                            profilePicture: url
+                        })
+                        .then(() => {
+                            
+                            document.getElementById('profilePicture').src = url;
+                            alert("Profile picture updated successfully!");
+                        })
+                        .catch(error => {
+                            console.error("Error updating profile picture:", error);
+                            alert("Failed to update profile picture.");
+                        });
+                    });
+                }).catch(function(error) {
+                    console.error("Error uploading file: ", error);
+                    alert("Failed to upload profile picture.");
+                });
+            } else {
+               
+                console.log("No user is signed in.");
+                alert("Please sign in to change profile picture.");
+            }
         });
     </script>
 </body>

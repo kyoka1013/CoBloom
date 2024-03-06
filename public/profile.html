@@ -79,7 +79,7 @@
     <script>
         // Firebaseの設定
         const firebaseConfig = {
-  apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
+            apiKey: "AIzaSyA8l73l4YIAkRGZm8gLgig7B3Cz6-vznyU",
   authDomain: "cobloom-58ea3.firebaseapp.com",
   projectId: "cobloom-58ea3",
   storageBucket: "cobloom-58ea3.appspot.com",
@@ -110,50 +110,40 @@
         const organization = organizationInput.value;
         const age = parseInt(ageInput.value); // 数値に変換
 
-        // プロフィール写真が変更された場合はアップロード
-        if (profilePicture) {
-            const storageRef = firebase.storage().ref();
-            const profilePictureRef = storageRef.child('profilePictures/' + user.uid + '/' + profilePicture.name);
-            profilePictureRef.put(profilePicture).then(function(snapshot) {
-                // アップロードした画像のURLを取得
-                profilePictureRef.getDownloadURL().then(function(url) {
-                    updateProfile(user, url, fullName, organization, age);
+        // 画像をFirebase Storageにアップロードし、URLを取得
+        const storageRef = firebase.storage().ref();
+        const profilePictureRef = storageRef.child('profilePictures/' + user.uid + '/' + profilePicture.name);
+        profilePictureRef.put(profilePicture).then(function(snapshot) {
+            // アップロードした画像のURLを取得
+            profilePictureRef.getDownloadURL().then(function(url) {
+                // FirestoreにユーザーIDと共にデータを保存
+                db.collection("profiles").doc(user.uid).set({
+                    profilePicture: url,
+                    fullName: fullName,
+                    organization: organization,
+                    age: age
+                })
+                .then(function() {
+                    console.log("Document successfully written!");
+                    alert("Profile saved successfully!");
+                    profileForm.reset();
+                    window.location.href = "home.html";
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                    alert("Failed to save profile.");
                 });
-            }).catch(function(error) {
-                console.error("Error uploading file: ", error);
-                alert("Failed to upload profile picture.");
             });
-        } else {
-            // プロフィール写真が変更されていない場合は現在のプロフィール情報を更新
-            updateProfile(user, null, fullName, organization, age);
-        }
+        }).catch(function(error) {
+            console.error("Error uploading file: ", error);
+            alert("Failed to upload profile picture.");
+        });
     } else {
         // ユーザーが認証されていない場合
         console.log("User is not signed in.");
         alert("Please sign in to save your profile.");
     }
 });
-
-// プロフィールを更新する関数
-function updateProfile(user, profilePictureUrl, fullName, organization, age) {
-    const profileRef = db.collection("profiles").doc(user.uid);
-    return profileRef.update({
-        profilePicture: profilePictureUrl || user.profilePicture, // プロフィール写真が変更されなかった場合は現在のURLを使用
-        fullName: fullName,
-        organization: organization,
-        age: age
-    })
-    .then(function() {
-        console.log("Document successfully updated!");
-        alert("Profile updated successfully!");
-        profileForm.reset();
-        window.location.href = "home.html";
-    })
-    .catch(function(error) {
-        console.error("Error updating document: ", error);
-        alert("Failed to update profile.");
-    });
-}
 
     </script>
 </body>
