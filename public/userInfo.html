@@ -12,6 +12,8 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f5f5f5;
+            color: #6d5347;
         }
         .profile-container {
             max-width: 600px;
@@ -19,18 +21,39 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         img#profilePicture {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
+            border: 2px solid #3DA2B0;
         }
         .edit-icon {
             font-size: 20px;
             cursor: pointer;
-            color: #FF883E; 
+            color: #3DA2B0;
             margin-left: 5px;
+        }
+        .edit-icon:hover {
+            color: #3DA2B0;
+        }
+        .edit-icon::before {
+            content: "\270E"; /* Unicode for edit icon */
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="file"] + label {
+            display: inline-block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: #3DA2B0;
+        }
+        input[type="file"] + label:hover {
+            color: #3DA2B0;
         }
     </style>
 </head>
@@ -39,12 +62,13 @@
         <h2>User Profile</h2>
         <label for="profileImageInput">
             <img id="profilePicture" src="" alt="Profile Picture">
-            <span class="edit-icon">&#9998;</span>
+            <span class="edit-icon"></span>
         </label>
-        <input type="file" id="profileImageInput" style="display: none;"><br><br>
-        <p><strong>Full Name:</strong> <span id="fullName"></span> <span class="edit-icon" id="editName">&#9998;</span></p>
-        <p><strong>Organization:</strong> <span id="organization"></span> <span class="edit-icon" id="editOrganization">&#9998;</span></p> 
-        <p><strong>Age:</strong> <span id="age"></span> <span class="edit-icon" id="editAge">&#9998;</span></p> 
+        <input type="file" id="profileImageInput">
+        <p><strong>Full Name:</strong> <span id="fullName"></span> <span class="edit-icon" id="editName"></span></p>
+        <p><strong>Organization:</strong> <span id="organization"></span> <span class="edit-icon" id="editOrganization"></span></p>
+        <p><strong>Age:</strong> <span id="age"></span> <span class="edit-icon" id="editAge"></span></p>
+        <p><strong>UserID:</strong><span id="userId"></span></p>
     </div>
 
     <script>
@@ -236,6 +260,17 @@
                
                 console.log("No user is signed in.");
                 alert("Please sign in to change profile picture.");
+            }
+        });
+
+        // ユーザーの認証状態を監視し、ユーザーがログインしている場合はUIDを表示する
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // ユーザーがログインしている場合、UIDを取得して表示する
+                document.getElementById('userId').textContent = user.uid;
+            } else {
+                // ユーザーがログインしていない場合、ログインページにリダイレクトするなどの処理を行う
+                window.location.href = 'login.html';
             }
         });
     </script>
